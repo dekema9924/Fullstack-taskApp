@@ -4,14 +4,21 @@ require('dotenv').config()
 const port =  3000;
 const accountRoute = require('./Routes/Accountroutes')
 const mongoose = require('mongoose')
+const TaskRouter = require('./Routes/TaskRoute')
+const cors = require('cors')
 
 
-//middlesware
+
+//ROUTERS
 app.use('/accountroute', accountRoute)
+app.use('/taskroute', TaskRouter)
+
+
+
 
 
 app.listen(port,async ()=>{
-    await mongoose.connect('mongodb://localhost:27017/accounts')
+    await mongoose.connect('mongodb://localhost:27017/Taskify')
     .then(()=>{
         console.log('connected to mongoose')
     })

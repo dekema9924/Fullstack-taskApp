@@ -4,11 +4,24 @@ const accountRoute = express.Router();
 const accountdb = require('../Model/accountmodels')
 const cors = require('cors')
 const bcrypt = require('bcrypt');
+const jwtAuth = require('../Auth/jwt');
+const verifyToken = require('../middleware/AuthUser')
+var cookieParser = require('cookie-parser')
 
 
 
-accountRoute.use(cors())
+
+
+accountRoute.use(cors({
+    credentials: true,
+    origin: 'http://localhost:5173',
+}));
 accountRoute.use(express.json());
+accountRoute.use(express.urlencoded({extended: true}));
+accountRoute.use(cookieParser())
+
+
+
 
 accountRoute.get('/', async (req, res) => {
     res.send('hey from routes')
@@ -28,7 +41,8 @@ accountRoute.post('/register', (req, res) => {
                 })
                 await newuser.save()
                     .then((result) => {
-                        res.status(200).json({ result, message: 'account created. ' })
+                        result.password = null
+                        res.status(200).json({result, message: 'account created. ' })
                     })
 
             })
@@ -38,22 +52,40 @@ accountRoute.post('/register', (req, res) => {
 
 //login account
 
-accountRoute.post('/login', async (req, res) => {
+accountRoute.post('/login',  async  (req, res) => {
     let { email, password } = req.body
     await accountdb.findOne({email})
     .then((found)=>{
         if(!found) return res.status(400).json({emailerr: 'Invalid email'})
             bcrypt.compare(password, found.password, ((err, hash)=>{
                 if(!hash) return res.status(404).json({passworderr: 'Inalid Password'})
-                    res.status(200).json({found, message: 'Loggin In'})
+                    //authenticate user
+                    const accesstoken = jwtAuth(found)
+                    res.cookie('jwt', accesstoken, {maxAge:1000 * 60 * 15})
+                    res.status(200).json({accesstoken, userId:found, message: 'Loggin In', isLoggedIn: true})
                 if(err){
-                    res.status(400).json({err, message: 'inavlid credentials'})
-                }
-                    
+                    res.status(400).json({err, message: 'inavlid credentials', isLoggedIn: false})
+                }                
         }))
     })
 
 })
+
+accountRoute.get('/notes', verifyToken, ((req,res)=>{
+    let authUser = req.user;
+    accountdb.findById(authUser.id).select('-password')
+    .then((result)=>{
+        // console.log(result)
+        if(result) return res.status(200).json({result, isLoggedIn: true })
+
+    })
+}))
+
+accountRoute.get('/logoff', ((req,res)=>{
+    res.status(200).json({message: 'logged off successfully'})
+
+}))
+
 
 
 
@@ -67,4 +99,3 @@ accountRoute.post('/login', async (req, res) => {
 
 module.exports = accountRoute
 
-//continue from adding user info to db//
