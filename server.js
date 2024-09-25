@@ -5,7 +5,6 @@ const port =  3000;
 const accountRoute = require('./Routes/Accountroutes')
 const mongoose = require('mongoose')
 const TaskRouter = require('./Routes/TaskRoute')
-const cors = require('cors')
 
 
 
@@ -18,7 +17,7 @@ app.use('/taskroute', TaskRouter)
 
 
 app.listen(port,async ()=>{
-    await mongoose.connect('mongodb://localhost:27017/Taskify')
+    await mongoose.connect(process.env.MONGODBURL)
     .then(()=>{
         console.log('connected to mongoose')
     })
