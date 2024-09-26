@@ -5,12 +5,14 @@ const port =  3000;
 const accountRoute = require('./Routes/Accountroutes')
 const mongoose = require('mongoose')
 const TaskRouter = require('./Routes/TaskRoute')
+const cors = require('cors')
 
 
 
 //ROUTERS
 app.use('/accountroute', accountRoute)
 app.use('/taskroute', TaskRouter)
+app.use(cors());
 
 
 
