@@ -13,7 +13,7 @@ const cors = require('cors')
 app.use('/accountroute', accountRoute)
 app.use('/taskroute', TaskRouter)
 const corsOptions ={
-    origin:'http://localhost:5173/', 
+    origin:'https://fullstack-taskapp.onrender.com', 
     credentials:true,            //access-control-allow-credentials:true
     optionSuccessStatus:200
 }

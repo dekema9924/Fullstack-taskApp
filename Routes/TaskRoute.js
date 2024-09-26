@@ -8,7 +8,7 @@ const cookieParser = require('cookie-parser')
 
 TaskRouter.use(cors({
     credentials: true,
-    origin: 'http://localhost:5173',
+    origin: 'https://fullstack-taskapp.onrender.com',
 }));
 TaskRouter.use(express.json());
 TaskRouter.use(cookieParser())

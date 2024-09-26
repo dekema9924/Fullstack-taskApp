@@ -14,7 +14,7 @@ var cookieParser = require('cookie-parser')
 
 accountRoute.use(cors({
     credentials: true,
-    origin: 'http://localhost:5173',
+    origin: 'https://fullstack-taskapp.onrender.com',
 }));
 accountRoute.use(express.json());
 accountRoute.use(express.urlencoded({extended: true}));
